@@ -64,13 +64,13 @@ app.MapPost("/upload", async (HttpContext context) =>
 
     string imgId = Guid.NewGuid().ToString();
 
-    if (string.IsNullOrEmpty(imgTitle)) 
+    if (string.IsNullOrEmpty(imgTitle))
     {
         context.Response.StatusCode = 404;
         await context.Response.WriteAsync("Please Provide a title");
         return;
     }
-    
+
     if (imgfile == null || (imgfile.ContentType != "image/jpeg" && imgfile.ContentType != "image/png" && imgfile.ContentType != "image/gif"))
     {
         context.Response.StatusCode = 404;
@@ -82,13 +82,15 @@ app.MapPost("/upload", async (HttpContext context) =>
     {
         await imgfile.CopyToAsync(stream);
 
-        var imgObj = new Image {
+        var imgObj = new Image
+        {
             id = imgId,
             title = imgTitle,
             img = Convert.ToBase64String(stream.ToArray())
         };
 
-        var jsonOptions = new JsonSerializerOptions {
+        var jsonOptions = new JsonSerializerOptions
+        {
             WriteIndented = true,
             IncludeFields = true,
         };
