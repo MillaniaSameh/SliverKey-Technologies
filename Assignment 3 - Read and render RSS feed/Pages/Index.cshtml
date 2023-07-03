@@ -1,0 +1,19 @@
+﻿@page
+@model IndexModel
+
+@foreach (var item in Model.rssItemsList)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@item.PubDate</h5>
+            <h6 class="card-subtitle mb-2 text-muted">@item.Title</h6>
+            <p class="card-text">@item.Description</p>
+            <a href="@item.Link" class="card-link" target="_blank">
+                <button type="button" class="btn btn-primary">Link</button>
+            </a>
+        </div>
+    </div>
+    <br />
+}
+
+
