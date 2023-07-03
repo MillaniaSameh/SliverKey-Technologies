@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Xml;
 
-namespace Assignment_3___Read_and_render_RSS_feed.Pages;
+namespace DealingWithXML.Pages;
 
 public class IndexModel : PageModel
 {
@@ -17,10 +17,10 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        await loadxml();
+        await LoadXml();
     }
 
-    public async Task loadxml()
+    public async Task LoadXml()
     {
         string url = "http://scripting.com/rss.xml";
 
@@ -67,7 +67,6 @@ public class IndexModel : PageModel
         }
     }
 }
-
 
 public class RssItem
 {

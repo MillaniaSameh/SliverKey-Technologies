@@ -4,7 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Assignment_3___Read_and_render_RSS_feed</RootNamespace>
   </PropertyGroup>
 
 </Project>
