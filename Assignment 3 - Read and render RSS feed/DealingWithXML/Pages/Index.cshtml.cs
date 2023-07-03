@@ -8,11 +8,9 @@ public class IndexModel : PageModel
 {
     public List<RssItem> RssItemsList { get; private set; }
 
-    private readonly ILogger<IndexModel> _logger;
-
-    public IndexModel(ILogger<IndexModel> logger)
+    public IndexModel()
     {
-        _logger = logger;
+
     }
 
     public async Task OnGetAsync()
