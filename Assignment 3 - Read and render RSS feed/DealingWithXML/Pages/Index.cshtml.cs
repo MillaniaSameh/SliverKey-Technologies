@@ -6,7 +6,7 @@ namespace DealingWithXML.Pages;
 
 public class IndexModel : PageModel
 {
-    public List<RssItem> RssItemsList { get; private set; }
+    public List<RssItem> RssItemsList { get; private set; } = new();
 
     public IndexModel()
     {
