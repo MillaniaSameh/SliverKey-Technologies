@@ -6,7 +6,7 @@ namespace DealingWithXML.Pages;
 
 public class IndexModel : PageModel
 {
-    public List<RssItem> rssItemsList = new List<RssItem>();
+    public List<RssItem> RssItemsList { get; private set; }
 
     private readonly ILogger<IndexModel> _logger;
 
@@ -63,7 +63,7 @@ public class IndexModel : PageModel
                 itemsList.Add(rssItem);
             }
 
-            rssItemsList = itemsList;
+            RssItemsList = itemsList;
         }
     }
 }
