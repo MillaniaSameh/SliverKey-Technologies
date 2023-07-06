@@ -1,0 +1,99 @@
+﻿@page "{pageNumber:int?}/{pageSize:int?}"
+@model IndexModel
+
+@foreach (var item in Model.RssItemsList)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@item.PubDate</h5>
+            <p class="card-text mb-2 text-muted">
+                Published by @item.FeedTitle @item.Title
+            </p>
+            <p class="card-text">@item.Description</p>
+            <a href="@item.Link" target="_blank" class="btn btn-primary">Original article</a>
+        </div>
+    </div>
+}
+
+@* <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @if (Model.TotalPages > 1)
+        {
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = Model.PageNumber - 1, pageSize = Model.PageSize })">Previous</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = i, pageSize = Model.PageSize })">@i</a>
+                </li>
+            }
+
+            @if (Model.PageNumber < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = Model.PageNumber + 1, pageSize = Model.PageSize })">Next</a>
+                </li>
+            }
+        }
+    </ul>
+</nav> *@
+
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @if (Model.TotalPages > 1)
+        {
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = Model.PageNumber - 1, pageSize = Model.PageSize })">Previous</a>
+                </li>
+            }
+
+            @if (Model.PageNumber > 3)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = 1, pageSize = Model.PageSize })">1</a>
+                </li>
+                @if (Model.PageNumber > 4)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+            }
+
+            @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = i, pageSize = Model.PageSize })">@i</a>
+                </li>
+            }
+
+            @if (Model.PageNumber < Model.TotalPages - 2)
+            {
+                @if (Model.PageNumber < Model.TotalPages - 3)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = Model.TotalPages, pageSize = Model.PageSize })">@Model.TotalPages</a>
+                </li>
+            }
+
+            @if (Model.PageNumber < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Page("Index", new { pageNumber = Model.PageNumber + 1, pageSize = Model.PageSize })">Next</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
