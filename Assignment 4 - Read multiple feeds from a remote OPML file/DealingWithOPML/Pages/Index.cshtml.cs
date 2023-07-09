@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Xml;
 using System.Text.Json;
 
@@ -9,14 +10,16 @@ namespace DealingWithOPML.Pages;
 public class IndexModel : PageModel
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IDistributedCache _cache;
     public List<RssItem> RssItemsList { get; private set; } = new();
     public int PageNumber { get; private set; } = 1;
     public int PageSize { get; private set; } = 20;
     public int TotalPages { get; private set; } = 1;
 
-    public IndexModel(IHttpClientFactory httpClientFactory)
+    public IndexModel(IHttpClientFactory httpClientFactory, IDistributedCache cache)
     {
         _httpClientFactory = httpClientFactory;
+        _cache = cache;
     }
 
     public async Task OnGetAsync(int pageNumber = 1, int pageSize = 20)
@@ -28,7 +31,7 @@ public class IndexModel : PageModel
 
     public async Task LoadOpml()
     {
-        string jsonItems = HttpContext.Session.GetString("itemsList");
+        string? jsonItems = await _cache.GetStringAsync("itemsList");
 
         if (string.IsNullOrEmpty(jsonItems))
         {
@@ -67,7 +70,11 @@ public class IndexModel : PageModel
                 }
             }
 
-            HttpContext.Session.SetString("itemsList", JsonSerializer.Serialize(itemsList));
+            jsonItems = JsonSerializer.Serialize(itemsList);
+            await _cache.SetStringAsync("itemsList", jsonItems, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+            });
             RssItemsList = itemsList;
         }
         else
