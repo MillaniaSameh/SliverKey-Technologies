@@ -12,17 +12,16 @@ public class IndexModel : PageModel
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IDistributedCache _cache;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     public List<RssItem> RssItemsList { get; private set; } = new();
-    public int PageNumber { get; private set; } = 1;
+    public int PageNumber { get; private set; } = 0;
     public int PageSize { get; private set; } = 5;
-    public int TotalPages { get; private set; } = 1;
+    public int TotalPages { get; private set; } = 0;
+    public string PageName { get; private set; } = "Index";
 
-    public IndexModel(IHttpClientFactory httpClientFactory, IDistributedCache cache, IHttpContextAccessor httpContextAccessor)
+    public IndexModel(IHttpClientFactory httpClientFactory, IDistributedCache cache)
     {
         _httpClientFactory = httpClientFactory;
         _cache = cache;
-        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task OnGetAsync(int pageNumber = 1, int pageSize = 5)
@@ -73,6 +72,7 @@ public class IndexModel : PageModel
                     RssItem RssItem = CreateRssItem(itemNode, counter, feedTitle);
                     itemsList.Add(RssItem);
                 }
+                break;
             }
 
             jsonItems = JsonSerializer.Serialize(itemsList);
@@ -122,36 +122,31 @@ public class IndexModel : PageModel
         return rssItem;
     }
 
-    public async Task<IActionResult> OnPostToggleFavrorite()
+    public async Task<IActionResult> OnPostToggleFavorite()
     {
         int itemId = int.Parse(Request.Form["id"]);
+        string pageName = Request.Form["pageName"];
 
         UpdateCookie(itemId);
         await UpdateFavoriteFeed(itemId);
 
-        return RedirectToPage("/Index");
+        return RedirectToPage($"/{pageName}");
     }
 
     public void UpdateCookie(int itemId)
     {
-        var userFavoriteFeeds = _httpContextAccessor.HttpContext.Request.Cookies["favoriteFeeds"];
+        var userFavoriteFeeds = HttpContext.Request.Cookies["favoriteFeeds"];
         var favorites = new List<int>();
 
         if (!string.IsNullOrEmpty(userFavoriteFeeds))
-        {
             favorites = JsonSerializer.Deserialize<List<int>>(userFavoriteFeeds);
-        }
 
         if (!favorites.Contains(itemId))
-        {
             favorites.Add(itemId);
-        }
         else
-        {
             favorites.Remove(itemId);
-        }
 
-        _httpContextAccessor.HttpContext.Response.Cookies.Append("favoriteFeeds", JsonSerializer.Serialize(favorites), new CookieOptions
+        HttpContext.Response.Cookies.Append("favoriteFeeds", JsonSerializer.Serialize(favorites), new CookieOptions
         {
             Path = "/",
             IsEssential = true,
@@ -186,4 +181,18 @@ public class RssItem
     public string Link { get; set; }
     public string FeedTitle { get; set; }
     public bool IsFavorite { get; set; }
+}
+
+public class Pagination
+{
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
+    public string PageName { get; set; }
+}
+
+public class RssFeeds
+{
+    public List<RssItem> RssItemsList { get; set; } = new();
+    public string PageName { get; set; }
 }

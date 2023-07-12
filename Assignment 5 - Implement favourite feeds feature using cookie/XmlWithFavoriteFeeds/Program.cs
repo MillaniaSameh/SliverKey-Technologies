@@ -4,7 +4,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
