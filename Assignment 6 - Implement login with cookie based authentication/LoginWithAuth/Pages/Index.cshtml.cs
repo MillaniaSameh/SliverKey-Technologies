@@ -8,11 +8,13 @@ namespace LoginWithAuth.Pages;
 
 public class IndexModel : PageModel
 {
+    [BindProperty]
+    public LoginInput LoginInput { get; set; }
     private readonly string _loginPath = "/Index";
 
     public IndexModel()
     {
-        
+
     }
 
     public void OnGet()
@@ -22,8 +24,8 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        string username = Request.Form["inputUsername"];
-        string password = Request.Form["inputPassword"];
+        string username = LoginInput.Username;
+        string password = LoginInput.Password;
 
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
@@ -40,7 +42,7 @@ public class IndexModel : PageModel
             };
 
             var claimsIdentity = new ClaimsIdentity(
-                claims, 
+                claims,
                 CookieAuthenticationDefaults.AuthenticationScheme
             );
 
@@ -66,4 +68,10 @@ public class IndexModel : PageModel
 
         return RedirectToPage(_loginPath);
     }
+}
+
+public class LoginInput
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
 }
