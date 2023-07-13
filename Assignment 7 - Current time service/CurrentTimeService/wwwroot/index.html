@@ -7,11 +7,11 @@
   <body>
     <h2 id="current-time"></h2>
     <script>
-      fetch("/current-time")
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("current-time").innerText = data;
-        });
+      (async () => {
+        const response = await fetch("/current-time");
+        const data = await response.text();
+        document.getElementById("current-time").innerText = data;
+      })();
     </script>
   </body>
 </html>
