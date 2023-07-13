@@ -17,12 +17,10 @@
                 <div class="mb-3">
                     <label for="inputUsername" class="form-label">Username</label>
                     <input type="text" class="form-control" id="inputUsername" name="LoginInput.Username" required>
-                    <span asp-validation-for="LoginInput.Username" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label for="inputPassword" class="form-label">Password</label>
                     <input type="password" class="form-control" id="inputPassword" name="LoginInput.Password" required>
-                    <span asp-validation-for="LoginInput.Password" class="text-danger"></span>
                 </div>
                 <div asp-validation-summary="All" class="text-danger" style="margin-top: 10px;"></div>
                 <button type="submit" class="btn btn-primary">Login</button>
