@@ -1,0 +1,30 @@
+﻿@page "{pageNumber:int?}/{pageSize:int?}"
+@model IndexModel
+
+<div id="content-container">
+    @if (Model.RssItemsList == null) 
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-text">No items to show.</h5>
+            </div>
+        </div>
+    }
+    else if (Model.RssItemsList != null)
+    {
+        @Html.Partial("_RssFeeds", new RssFeeds
+        {
+            RssItemsList = Model.RssItemsList,
+            PageName = Model.PageName,
+            PageNumber = Model.PageNumber,
+            PageSize = Model.PageSize
+        })
+
+        @* @Html.Partial("_Pagination", new Pagination
+        {
+            PageNumber = Model.PageNumber,
+            PageSize = Model.PageSize,
+            TotalPages = Model.TotalPages,
+        }) *@
+    }
+</div>
