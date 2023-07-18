@@ -11,7 +11,7 @@
             <p class="card-text">@item.Description</p>
             <a href="@item.Link" target="_blank" class="btn btn-primary">Original article</a>
             <form   method="post" 
-                    hx-post="/Index?handler=ToggleFavorite" 
+                    hx-post="/toggleFavorite" 
                     hx-trigger="click"
                     hx-target="#content-container" 
                     hx-swap="innerHTML">

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Xml;
@@ -89,51 +88,6 @@ public class IndexModel : PageModel
         TotalPages = (int)Math.Ceiling(RssItemsList.Count / (double)PageSize);
         int skip = (PageNumber - 1) * PageSize;
         RssItemsList = RssItemsList.Skip(skip).Take(PageSize).ToList();
-    }
-
-    public async Task<IActionResult> OnPostToggleFavorite(int id)
-    {
-        // Update Cookie
-
-        var userFavoriteFeeds = HttpContext.Request.Cookies["favoriteFeeds"];
-        var favorites = new List<int>();
-
-        if (!string.IsNullOrEmpty(userFavoriteFeeds))
-            favorites = JsonSerializer.Deserialize<List<int>>(userFavoriteFeeds);
-
-        if (!favorites.Contains(id))
-            favorites.Add(id);
-        else
-            favorites.Remove(id);
-
-        HttpContext.Response.Cookies.Append("favoriteFeeds", JsonSerializer.Serialize(favorites), new CookieOptions
-        {
-            Path = "/",
-            IsEssential = true,
-        });
-
-        // Update Favorite Feed
-
-        string? jsonItems = await _cache.GetStringAsync("itemsList");
-
-        if (!string.IsNullOrEmpty(jsonItems))
-        {
-            List<RssItem> tempRssItemsList = JsonSerializer.Deserialize<List<RssItem>>(jsonItems);
-            RssItem rssItem = tempRssItemsList.Find(item => item.Id == id);
-
-            if (rssItem != null)
-            {
-                rssItem.IsFavorite = !rssItem.IsFavorite;
-                jsonItems = JsonSerializer.Serialize(tempRssItemsList);
-                await _cache.SetStringAsync("itemsList", jsonItems);
-            }
-        }
-
-        // Redirect
-
-        string refererUrl = Request.Headers["Referer"].ToString();
-
-        return Redirect(refererUrl);
     }
 
     RssItem CreateRssItem(XmlNode itemNode, int counter, string feedTitle)
