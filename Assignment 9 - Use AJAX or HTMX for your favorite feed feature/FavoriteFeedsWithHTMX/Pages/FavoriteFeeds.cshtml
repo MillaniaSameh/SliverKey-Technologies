@@ -1,0 +1,28 @@
+@page "{pageNumber:int?}/{pageSize:int?}"
+@model FavoriteFeedsModel
+
+<div id="content-container">
+    @if (Model.RssFavoriteItemsList == null) 
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-text">No items starred yet.</h5>
+            </div>
+        </div>
+    }
+    else {
+
+        @Html.Partial("_RssFeeds", new RssFeeds
+        {
+            RssItemsList = Model.RssFavoriteItemsList,
+        })
+
+        @Html.Partial("_Pagination", new Pagination
+        {
+            PageNumber = Model.PageNumber,
+            PageSize = Model.PageSize,
+            TotalPages = Model.TotalPages,
+            PageName = Model.PageName
+        })
+    }
+</div>
