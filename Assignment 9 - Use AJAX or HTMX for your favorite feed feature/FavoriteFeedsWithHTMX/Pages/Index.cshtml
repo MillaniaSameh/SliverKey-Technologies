@@ -15,16 +15,14 @@
         @Html.Partial("_RssFeeds", new RssFeeds
         {
             RssItemsList = Model.RssItemsList,
-            PageName = Model.PageName,
-            PageNumber = Model.PageNumber,
-            PageSize = Model.PageSize
         })
 
-        @* @Html.Partial("_Pagination", new Pagination
+        @Html.Partial("_Pagination", new Pagination
         {
             PageNumber = Model.PageNumber,
             PageSize = Model.PageSize,
             TotalPages = Model.TotalPages,
-        }) *@
+            PageName = Model.PageName
+        })
     }
 </div>

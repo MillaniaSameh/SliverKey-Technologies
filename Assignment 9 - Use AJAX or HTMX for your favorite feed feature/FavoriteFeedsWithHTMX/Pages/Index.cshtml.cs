@@ -12,51 +12,27 @@ public class IndexModel : PageModel
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IDistributedCache _cache;
-    private readonly ILogger<IndexModel> _logger;
     public List<RssItem> RssItemsList { get; private set; } = new();
     public int PageNumber { get; private set; } = 0;
     public int PageSize { get; private set; } = 5;
     public int TotalPages { get; private set; } = 0;
     public string PageName { get; private set; } = "Index";
-    public bool MainPage { get; private set; } = true;
 
-    public IndexModel(IHttpClientFactory httpClientFactory, IDistributedCache cache, ILogger<IndexModel> logger)
+    public IndexModel(IHttpClientFactory httpClientFactory, IDistributedCache cache)
     {
         _httpClientFactory = httpClientFactory;
         _cache = cache;
-        _logger = logger;
     }
 
     public async Task OnGetAsync(int pageNumber = 1, int pageSize = 5)
     {
         PageNumber = pageNumber;
         PageSize = pageSize;
-
-        if (MainPage)
-            await LoadAllFeeds();
-        else 
-            await LoadFavoriteFeeds();
-    }
-
-    public async Task<IActionResult> OnGetUpdateContent()
-    {
-        var mainPageString = Request.Query["mainPage"];
-        var mainPage = string.IsNullOrEmpty(mainPageString) ? true : bool.Parse(mainPageString);
-
-        MainPage = mainPage;
-
-        if (MainPage)
-            await LoadAllFeeds();
-        else 
-            await LoadFavoriteFeeds();
-
-        return Page();
+        await LoadAllFeeds();
     }
 
     public async Task LoadAllFeeds()
     {
-        PageName = "Index";
-
         string? jsonItems = await _cache.GetStringAsync("itemsList");
         int counter = 0;
 
@@ -111,40 +87,12 @@ public class IndexModel : PageModel
             RssItemsList = JsonSerializer.Deserialize<List<RssItem>>(jsonItems);
         }
 
-        // TotalPages = (int)Math.Ceiling(RssItemsList.Count / (double)PageSize);
-        // int skip = (PageNumber - 1) * PageSize;
-        // RssItemsList = RssItemsList.Skip(skip).Take(PageSize).ToList();
+        TotalPages = (int)Math.Ceiling(RssItemsList.Count / (double)PageSize);
+        int skip = (PageNumber - 1) * PageSize;
+        RssItemsList = RssItemsList.Skip(skip).Take(PageSize).ToList();
     }
 
-    public async Task LoadFavoriteFeeds()
-    {
-        PageName = "FavoriteFeeds";
-
-        string userFavoriteFeeds = HttpContext.Request.Cookies["favoriteFeeds"];
-
-        if (!string.IsNullOrEmpty(userFavoriteFeeds) && userFavoriteFeeds != "[]")
-        {
-            int[] favoriteFeedsIds = JsonSerializer.Deserialize<int[]>(userFavoriteFeeds);
-
-            string? jsonItems = await _cache.GetStringAsync("itemsList");
-            List<RssItem> RssItems = new();
-
-            if (!string.IsNullOrEmpty(jsonItems))
-                RssItems = JsonSerializer.Deserialize<List<RssItem>>(jsonItems);
-
-            RssItemsList = RssItems.Where(item => favoriteFeedsIds.Contains(item.Id)).ToList();
-
-            // TotalPages = (int)Math.Ceiling(RssItemsList.Count / (double)PageSize);
-            // int skip = (PageNumber - 1) * PageSize;
-            // RssItemsList = RssItemsList.Skip(skip).Take(PageSize).ToList();
-        }
-        else
-        {
-            RssItemsList = null;
-        }
-    }
-
-    public async Task<IActionResult> OnPostToggleFavorite(int id, string pageName)
+    public async Task<IActionResult> OnPostToggleFavorite(int id)
     {
         // Update Cookie
 
@@ -236,12 +184,10 @@ public class Pagination
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
     public int TotalPages { get; set; }
+    public string PageName { get; set; }
 }
 
 public class RssFeeds
 {
     public List<RssItem> RssItemsList { get; set; } = new();
-    public string PageName { get; set; }
-    public int PageNumber { get; set; }
-    public int PageSize { get; set; }
 }
