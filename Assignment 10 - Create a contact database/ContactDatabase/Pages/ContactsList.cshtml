@@ -1,0 +1,41 @@
+@page
+@model ContactsListModel
+
+<table class="table table-striped table-responsive">
+    <thead>
+        <tr class="table-dark">
+            <th scope="col"></th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contact in Model.ContactsList)
+        {
+            var rowClass = contact.Id % 2 == 0 ? "even-row" : "odd-row";
+            var married = contact.MaritalStatus == true ? "married" : "not married";
+
+            <tr class="@rowClass" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@contact.Id" role="button" data-bs-target="#collapseArea-@contact.Id">
+                <th scope="row">@contact.Id</th>
+                <td>@contact.FirstName</td>
+                <td>@contact.LastName</td>
+                <td>@contact.Email</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="padding: 0;">
+                    <div class="collapse" id="collapseArea-@contact.Id">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@contact.Title @contact.FirstName @contact.LastName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Date of birth: @contact.DateOfBirth</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">Marital status: @married</h6>
+                                <p class="card-text">@contact.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

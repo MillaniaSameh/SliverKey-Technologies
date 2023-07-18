@@ -21,11 +21,23 @@ html {
   min-height: 100%;
 }
 
+body {
+  margin-bottom: 60px;
+}
+
 /***************************** Custom Styles *****************************/
 .card-container {
   width: 45%;
   margin: auto;
   margin-top: 50px;
+}
+
+.odd-row {
+  background-color: white;
+}
+
+.even-row {
+  background-color: #f2f2f2;
 }
 
 @media (max-width: 1000px) {
