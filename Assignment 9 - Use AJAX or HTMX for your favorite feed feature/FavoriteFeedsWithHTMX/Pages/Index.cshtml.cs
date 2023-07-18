@@ -72,7 +72,6 @@ public class IndexModel : PageModel
                     RssItem RssItem = CreateRssItem(itemNode, counter, feedTitle);
                     itemsList.Add(RssItem);
                 }
-                break;
             }
 
             jsonItems = JsonSerializer.Serialize(itemsList);
