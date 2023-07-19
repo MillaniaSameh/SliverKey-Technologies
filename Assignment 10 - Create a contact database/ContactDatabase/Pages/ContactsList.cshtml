@@ -1,6 +1,11 @@
 @page
 @model ContactsListModel
 
+@* <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search by First Name, Last Name, or Email" aria-label="Search" aria-describedby="search-button" id="search-input">
+    <button class="btn btn-outline-secondary" type="button" id="search-button">Search</button>
+</div> *@
+
 <table class="table table-striped table-responsive">
     <thead>
         <tr class="table-dark">
@@ -16,7 +21,7 @@
             var rowClass = contact.Id % 2 == 0 ? "even-row" : "odd-row";
             var married = contact.MaritalStatus == true ? "married" : "not married";
 
-            <tr class="@rowClass" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@contact.Id" role="button" data-bs-target="#collapseArea-@contact.Id">
+            <tr class="@rowClass search-filter" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@contact.Id" role="button" data-bs-target="#collapseArea-@contact.Id">
                 <th scope="row">@contact.Id</th>
                 <td>@contact.FirstName</td>
                 <td>@contact.LastName</td>
@@ -39,3 +44,27 @@
         }
     </tbody>
 </table>
+
+@* <script>
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const rows = document.getElementsByClassName('search-filter');
+
+    searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        console.log(rows)
+        for (let i = 1; i < rows.length; i += 2) {
+            const userData = rows[i].innerText.split("\t");
+            const firstName = userData[1].toLowerCase();
+            const lastName = userData[2].toLowerCase();
+            const email = userData[3].toLowerCase();
+            if (firstName.includes(searchTerm) || lastName.includes(searchTerm) || email.includes(searchTerm)) {
+                rows[i].style.display = '';
+                rows[i + 1].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+                rows[i + 1].style.display = 'none';
+            }
+        }
+    });
+</script> *@
