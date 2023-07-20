@@ -1,7 +1,13 @@
+using EdgeDB;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("contactdb"), config =>
+{
+    config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
+});
 
 var app = builder.Build();
 

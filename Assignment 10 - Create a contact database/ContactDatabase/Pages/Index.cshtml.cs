@@ -8,13 +8,12 @@ public class IndexModel : PageModel
 {
     [BindProperty]
     public Contact NewContact { get; set; } = new();
+    public int counter { get; set; } = 0;
     private readonly EdgeDBClient _client;
-    private readonly ILogger<IndexModel> _logger;
 
-    public IndexModel(EdgeDBClient client, ILogger<IndexModel> logger)
+    public IndexModel(EdgeDBClient client)
     {
         _client = client;
-        _logger = logger;
     }
 
     public void OnGet()
@@ -28,42 +27,28 @@ public class IndexModel : PageModel
         || string.IsNullOrEmpty(NewContact.LastName)
         || string.IsNullOrEmpty(NewContact.Email)
         || string.IsNullOrEmpty(NewContact.Title)
-        || string.IsNullOrEmpty(NewContact.DateOfBirth))
+        || string.IsNullOrEmpty(NewContact.BirthDate))
         {
             return Page();
         }
 
-        // var client = new EdgeDBClient();
+        counter++;
 
-        // var result = await client.QueryAsync<Contact>("SELECT Person { Name, Age }");
+        var query = "INSERT Contact {contact_id := <int64>$contact_id, first_name := <str>$first_name, last_name := <str>$last_name, email := <str>$email, title := <str>$title, description := <str>$description, birth_date := <str>$birth_date, marital_status := <bool>$marital_status}";
 
-        // using var conn = await EdgeDb.Driver.EdgeDbConnection.ConnectAsync(
-        //     "edgedb://user:password@localhost:edgedb"
-        // );
+        await _client.ExecuteAsync(query, new Dictionary<string, object?>
+        {
+            {"contact_id", Convert.ToInt64(counter)},
+            {"first_name", NewContact.FirstName},
+            {"last_name", NewContact.LastName},
+            {"email", NewContact.Email},
+            {"title", NewContact.Title},
+            {"description", NewContact.Description},
+            {"birth_date", NewContact.BirthDate},
+            {"marital_status", NewContact.MaritalStatus}
+        });
 
-        // var query = $"INSERT Person {{ first_name := '{FirstName}', last_name := '{LastName}', email := '{Email}' }};";
-        // await conn.Execute(query);
-
-
-
-        var connString = EdgeDBConnection.Parse("edgedb://millania:millania@localhost:5656/ContactDatabase");
-        var client = new EdgeDBClient(connString);
-
-        await client.ExecuteAsync(
-            "INSERT Contact {"
-            + "id := <int64>$id,"
-            + "first_name := <str>$first_name,"
-            + "last_name := <str>$last_name,"
-            + "email := <str>$email,"
-            + "title := <str>$title,"
-            + "description := <str>$description,"
-            + "date_of_birth := <str>$date_of_birth,"
-            + "marital_status := <bool>$marital_status"
-            + "}",
-            NewContact
-        );
-
-        return Page();
+        return RedirectToPage("/ContactsList");
     }
 }
 
@@ -75,7 +60,7 @@ public class Contact
     public String Email { get; set; }
     public String Title { get; set; }
     public String Description { get; set; } = "";
-    public String DateOfBirth { get; set; }
+    public String BirthDate { get; set; }
     public bool MaritalStatus { get; set; }
 
     public Contact()
@@ -83,7 +68,7 @@ public class Contact
 
     }
 
-    public Contact(int id, string firstName, string lastName, string email, string title, string description, string dateOfBirth, bool maritalStatus)
+    public Contact(int id, string firstName, string lastName, string email, string title, string description, string birthDate, bool maritalStatus)
     {
         Id = id;
         FirstName = firstName;
@@ -91,7 +76,7 @@ public class Contact
         Email = email;
         Title = title;
         Description = description;
-        DateOfBirth = dateOfBirth;
+        BirthDate = birthDate;
         MaritalStatus = maritalStatus;
     }
 }

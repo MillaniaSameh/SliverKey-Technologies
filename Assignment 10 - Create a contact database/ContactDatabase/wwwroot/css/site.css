@@ -29,7 +29,7 @@ body {
 .card-container {
   width: 45%;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 35px;
 }
 
 .odd-row {
@@ -43,5 +43,11 @@ body {
 @media (max-width: 1000px) {
   .card-container {
     width: 90%;
+  }
+}
+
+@media (min-width: 1000px) and (max-width: 1300px) {
+  .card-container {
+    width: 60%;
   }
 }
