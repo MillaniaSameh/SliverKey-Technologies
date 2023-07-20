@@ -1,11 +1,13 @@
 using FavoriteFeedsWithHTMX.Pages;
 using System.Text.Json;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddAntiforgery();
 builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
 
@@ -28,8 +30,10 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.MapPost("/toggleFavorite", async (HttpContext httpContext) =>
+app.MapPost("/toggleFavorite", async (HttpContext httpContext, IAntiforgery antiforgery) =>
 {
+    await antiforgery.ValidateRequestAsync(httpContext);
+
     // Update Cookie
 
     var id = Convert.ToInt32(httpContext.Request.Form["id"]);
