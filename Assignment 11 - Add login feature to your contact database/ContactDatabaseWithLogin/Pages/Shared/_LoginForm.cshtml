@@ -1,6 +1,11 @@
 
 <div class="card mb-3 login-form">
     <div class="card-body">
+        @if (Context.Request.Query.ContainsKey("errorMessage"))
+        {
+            <div class="alert alert-danger">@Context.Request.Query["errorMessage"]</div>
+        }
+        
         <form method="post" action="/login">
             @Html.AntiForgeryToken()
 
@@ -13,8 +18,7 @@
                 <label for="passwordInput" class="form-label">Password</label>
                 <input type="password" class="form-control" id="passwordInput" name="password" required>
             </div>
-
-            @* <div asp-validation-summary="All" class="text-danger" style="margin-top: 10px;"></div> *@
+            
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>
