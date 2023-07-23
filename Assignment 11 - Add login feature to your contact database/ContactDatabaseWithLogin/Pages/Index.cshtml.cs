@@ -26,8 +26,10 @@ public class IndexModel : PageModel
         || string.IsNullOrEmpty(NewContact.LastName)
         || string.IsNullOrEmpty(NewContact.Email)
         || string.IsNullOrEmpty(NewContact.Title)
+        || string.IsNullOrEmpty(NewContact.Description)
         || string.IsNullOrEmpty(NewContact.BirthDate))
         {
+            ModelState.AddModelError("ContactError", "All fields are required.");
             return Page();
         }
 
