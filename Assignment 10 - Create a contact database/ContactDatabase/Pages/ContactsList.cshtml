@@ -18,20 +18,22 @@
     <tbody id="myTable">
         @if (Model.ContactsList.Count > 0)
         {
-            @foreach (var contact in Model.ContactsList)
+            @for (int i = 0; i < Model.ContactsList.Count; i++)
             {
-                var rowClass = contact.Id % 2 == 0 ? "even-row" : "odd-row";
+                var contact = Model.ContactsList[i];
+
+                var rowClass = i % 2 == 0 ? "even-row" : "odd-row";
                 var married = contact.MaritalStatus == true ? "married" : "not married";
 
-                <tr class="@rowClass search-filter" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@contact.Id" role="button" data-bs-target="#collapseArea-@contact.Id">
-                    <th scope="row">@contact.Id</th>
+                <tr class="@rowClass search-filter" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@i" role="button" data-bs-target="#collapseArea-@i">
+                    <th scope="row">@(i+1)</th>
                     <td>@contact.FirstName</td>
                     <td>@contact.LastName</td>
                     <td>@contact.Email</td>
                 </tr>
                 <tr>
                     <td colspan="4" style="padding: 0;">
-                        <div class="collapse" id="collapseArea-@contact.Id">
+                        <div class="collapse" id="collapseArea-@i">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">@contact.Title @contact.FirstName @contact.LastName</h5>
