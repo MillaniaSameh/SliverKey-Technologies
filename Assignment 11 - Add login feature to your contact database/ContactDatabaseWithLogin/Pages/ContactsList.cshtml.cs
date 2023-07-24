@@ -16,7 +16,7 @@ public class ContactsListModel : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        var contacts = await _client.QueryAsync<Contact>("SELECT Contact { first_name, last_name, email, title, description, birth_date, marital_status };");
+        var contacts = await _client.QueryAsync<Contact>("SELECT Contact {*};");
 
         foreach (var contact in contacts)
         {

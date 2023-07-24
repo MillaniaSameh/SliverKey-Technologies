@@ -1,0 +1,19 @@
+@page
+@model CreateContact
+
+@if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    @if (ViewData["contact"] != null)
+    {
+        Contact contact = (Contact)ViewData["contact"];
+        @Html.Partial("_ContactForm", contact);
+    }
+    else 
+    {
+        @Html.Partial("_ContactForm", new Contact());
+    }
+}
+else 
+{
+    Response.Redirect("/");
+}

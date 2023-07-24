@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using EdgeDB;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace ContactDatabaseWithLogin.Pages;
 
@@ -9,10 +13,12 @@ public class IndexModel : PageModel
     [BindProperty]
     public Contact NewContact { get; set; } = new();
     private readonly EdgeDBClient _client;
+    private readonly IAntiforgery _antiforgery;
 
-    public IndexModel(EdgeDBClient client)
+    public IndexModel(EdgeDBClient client, IAntiforgery antiforgery)
     {
         _client = client;
+        _antiforgery = antiforgery;
     }
 
     public void OnGet()
@@ -20,58 +26,57 @@ public class IndexModel : PageModel
 
     }
 
-    public async Task<IActionResult> OnPostAddContact()
+    public async Task<IActionResult> OnPostLogin()
     {
-        if (string.IsNullOrEmpty(NewContact.FirstName)
-        || string.IsNullOrEmpty(NewContact.LastName)
-        || string.IsNullOrEmpty(NewContact.Email)
-        || string.IsNullOrEmpty(NewContact.Title)
-        || string.IsNullOrEmpty(NewContact.Description)
-        || string.IsNullOrEmpty(NewContact.BirthDate))
+        await _antiforgery.ValidateRequestAsync(HttpContext);
+
+        string? username = HttpContext.Request.Form["username"];
+        string? password = HttpContext.Request.Form["password"];
+
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-            ModelState.AddModelError("ContactError", "All fields are required.");
+            ModelState.AddModelError("LoginError", "Username and password are required.");
             return Page();
         }
 
-        await _client.ExecuteAsync($$"""
-            INSERT Contact {
-                first_name := "{{NewContact.FirstName}}",
-                last_name := "{{NewContact.LastName}}",
-                email := "{{NewContact.Email}}",
-                title := "{{NewContact.Title}}",
-                description := "{{NewContact.Description}}",
-                birth_date := "{{NewContact.BirthDate}}",
-                marital_status := {{NewContact.MaritalStatus}}
-            }
-        """);
+        var query = $@"SELECT Contact {{ username, password, contact_role }} FILTER .username = <str>$username AND .password = <str>$password;";
+        var contacts = await _client.QueryAsync<Contact>(query, new Dictionary<string, object?>
+        {
+            { "username", username },
+            { "password", password }
+        });
 
-        return RedirectToPage("/ContactsList");
+        if (contacts.Count > 0)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, contacts.First()?.ContactRole ?? string.Empty)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity)
+            );
+
+            return Redirect("/");
+        }
+
+        ModelState.AddModelError("LoginError", "Invalid username or password.");
+        return Page();
     }
-}
 
-public class Contact
-{
-    public String FirstName { get; set; } = "";
-    public String LastName { get; set; } = "";
-    public String Email { get; set; } = "";
-    public String Title { get; set; } = "";
-    public String Description { get; set; } = "";
-    public String BirthDate { get; set; } = "";
-    public bool MaritalStatus { get; set; }
-
-    public Contact()
+    public async Task<IActionResult> OnPostLogout()
     {
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
 
-    }
-
-    public Contact(string firstName, string lastName, string email, string title, string description, string birthDate, bool maritalStatus)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
-        Title = title;
-        Description = description;
-        BirthDate = birthDate;
-        MaritalStatus = maritalStatus;
+        return Redirect("/");
     }
 }

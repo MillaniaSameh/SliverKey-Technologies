@@ -1,0 +1,83 @@
+@model Contact
+
+<div class="text-center">
+    <h2>New Contact Form</h2>
+</div>
+
+<br >
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="post" asp-page="/CreateContact" asp-page-handler="@(string.IsNullOrEmpty(Model.FirstName) ? "AddContact" : "EditContact")">
+            <div class="container">
+                <div class="row" style="@(string.IsNullOrEmpty(Model.FirstName) ? "" : "display:none;")">
+                    <div class="col mb-3">
+                        <label for="usernameInput" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="usernameInput" name="NewContact.Username" value="@Model.Username" required>
+                    </div>
+                    <div class="col mb-3">
+                        <label for="passwordInput" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="passwordInput" name="NewContact.Password" value="@Model.Password" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="firstNameInput" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstNameInput" name="NewContact.FirstName" value="@Model.FirstName" required>
+                    </div>
+                    <div class="col mb-3">
+                        <label for="lastNameInput" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastNameInput" name="NewContact.LastName" value="@Model.LastName" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="emailInput" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="emailInput" name="NewContact.Email" value="@Model.Email" required>
+                    </div>
+                    <div class="col mb-3">
+                        <label for="titleInput" class="form-label">Title</label>
+                        <select class="form-select" id="titleInput" name="NewContact.Title">
+                            <option value="Mr." selected="@((Model.Title == "Mr.") ? true : false)">Mr.</option>
+                            <option value="Mrs." selected="@((Model.Title == "Mrs.") ? true : false)">Mrs.</option>
+                            <option value="Miss" selected="@((Model.Title == "Miss") ? true : false)">Miss</option>
+                            <option value="Ms." selected="@((Model.Title == "Ms.") ? true : false)">Ms.</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="descriptionInput" class="form-label">Description</label>
+                        <textarea class="form-control" id="descriptionInput" rows="3" name="NewContact.Description" required>@Model.Description</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="birthDateInput" class="form-label">Date Of Birth</label>
+                        <input type="date" class="form-control" id="birthDateInput" name="NewContact.BirthDate" value="@Model.BirthDate" required>
+                    </div>
+                    <div class="col mb-3">
+                        <label for="maritalStatusInput" class="form-label">Married</label>
+                        <select class="form-select" id="maritalStatusInput" name="NewContact.MaritalStatus">
+                            <option value="false" selected="@Model.MaritalStatus">No</option>
+                            <option value="true" selected="@Model.MaritalStatus">Yes</option>
+                        </select>
+                    </div>
+                    <div class="col mb-3">
+                        <label for="roleInput" class="form-label">Role</label>
+                        <select class="form-select" id="roleInput" name="NewContact.ContactRole">
+                            <option value="Normal" selected="@((Model.ContactRole == "Normal") ? true : false)">Normal</option>
+                            <option value="Admin" selected="@((Model.ContactRole == "Admin") ? true : false)">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <button type="submit" class="btn btn-primary">@(string.IsNullOrEmpty(Model.FirstName) ? "Add Contact" : "Edit Contact")</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
