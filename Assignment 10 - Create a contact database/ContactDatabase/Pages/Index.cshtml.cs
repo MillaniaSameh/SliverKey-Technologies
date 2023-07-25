@@ -33,17 +33,17 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        await _client.ExecuteAsync($$"""
-            INSERT Contact {
-                first_name := "{{NewContact.FirstName}}",
-                last_name := "{{NewContact.LastName}}",
-                email := "{{NewContact.Email}}",
-                title := "{{NewContact.Title}}",
-                description := "{{NewContact.Description}}",
-                birth_date := "{{NewContact.BirthDate}}",
-                marital_status := {{NewContact.MaritalStatus}}
-            }
-        """);
+        var query = "INSERT Contact {first_name := <str>$first_name, last_name := <str>$last_name, email := <str>$email, title := <str>$title, description := <str>$description, birth_date := <str>$birth_date, marital_status := <bool>$marital_status}";
+        await _client.ExecuteAsync(query, new Dictionary<string, object?>
+        {
+            {"first_name", NewContact.FirstName},
+            {"last_name", NewContact.LastName},
+            {"email", NewContact.Email},
+            {"title", NewContact.Title},
+            {"description", NewContact.Description},
+            {"birth_date", NewContact.BirthDate},
+            {"marital_status", NewContact.MaritalStatus}
+        });
 
         return RedirectToPage("/ContactsList");
     }
