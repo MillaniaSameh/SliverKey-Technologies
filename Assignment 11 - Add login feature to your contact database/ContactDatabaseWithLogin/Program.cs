@@ -33,12 +33,4 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-// app.MapPost("/login", async (HttpContext httpContext, EdgeDBClient client, IAntiforgery antiforgery) =>
-// {
-// });
-
-// app.MapPost("/logout", async (HttpContext httpContext) =>
-// {
-// });
-
 app.Run();
