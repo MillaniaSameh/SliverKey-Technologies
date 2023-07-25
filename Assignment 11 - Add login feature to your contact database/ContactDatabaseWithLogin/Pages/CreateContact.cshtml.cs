@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using EdgeDB;
 
@@ -36,10 +37,13 @@ public class CreateContact : PageModel
         }
 
         var query = "INSERT Contact {username := <str>$username, password := <str>$password, contact_role := <str>$contact_role, first_name := <str>$first_name, last_name := <str>$last_name, email := <str>$email, title := <str>$title, description := <str>$description, birth_date := <str>$birth_date, marital_status := <bool>$marital_status}";
+        var passwordHasher = new PasswordHasher<string>();
+        string hashedPassword = passwordHasher.HashPassword(null, NewContact.Password);
+
         await _client.ExecuteAsync(query, new Dictionary<string, object?>
         {
             {"username", NewContact.Username},
-            {"password", NewContact.Password},
+            {"password", hashedPassword},
             {"contact_role", NewContact.ContactRole},
             {"first_name", NewContact.FirstName},
             {"last_name", NewContact.LastName},

@@ -1,13 +1,13 @@
 public class Contact
 {
-    public String Username { get; set; } = "";
-    public String Password { get; set; } = "";
-    public String ContactRole { get; set; } = "";
-    public String FirstName { get; set; } = "";
-    public String LastName { get; set; } = "";
-    public String Email { get; set; } = "";
-    public String Title { get; set; } = "";
-    public String Description { get; set; } = "";
-    public String BirthDate { get; set; } = "";
+    public string Username { get; set; } = "";
+    public string Password { get; set; } = "";
+    public string ContactRole { get; set; } = "";
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string BirthDate { get; set; } = "";
     public bool MaritalStatus { get; set; } = false;
 }

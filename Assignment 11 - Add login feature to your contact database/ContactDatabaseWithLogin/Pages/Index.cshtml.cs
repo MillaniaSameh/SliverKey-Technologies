@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using EdgeDB;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -12,13 +11,13 @@ public class IndexModel : PageModel
 {
     [BindProperty]
     public Contact NewContact { get; set; } = new();
+    [BindProperty]
+    public LoginInput LoginInput { get; set; } = new();
     private readonly EdgeDBClient _client;
-    private readonly IAntiforgery _antiforgery;
 
-    public IndexModel(EdgeDBClient client, IAntiforgery antiforgery)
+    public IndexModel(EdgeDBClient client)
     {
         _client = client;
-        _antiforgery = antiforgery;
     }
 
     public void OnGet()
@@ -28,12 +27,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostLogin()
     {
-        await _antiforgery.ValidateRequestAsync(HttpContext);
-
-        string? username = HttpContext.Request.Form["username"];
-        string? password = HttpContext.Request.Form["password"];
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(LoginInput.Username) || string.IsNullOrEmpty(LoginInput.Password))
         {
             ModelState.AddModelError("LoginError", "Username and password are required.");
             return Page();
@@ -42,15 +36,15 @@ public class IndexModel : PageModel
         var query = $@"SELECT Contact {{ username, password, contact_role }} FILTER .username = <str>$username AND .password = <str>$password;";
         var contacts = await _client.QueryAsync<Contact>(query, new Dictionary<string, object?>
         {
-            { "username", username },
-            { "password", password }
+            { "username", LoginInput.Username },
+            { "password", LoginInput.Password }
         });
 
         if (contacts.Count > 0)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Name, LoginInput.Username),
                 new Claim(ClaimTypes.Role, contacts.First()?.ContactRole ?? string.Empty)
             };
 
@@ -79,4 +73,10 @@ public class IndexModel : PageModel
 
         return Redirect("/");
     }
+}
+
+public class LoginInput
+{
+    public string Username { get; set; } = "";
+    public string Password { get; set; } = "";
 }
