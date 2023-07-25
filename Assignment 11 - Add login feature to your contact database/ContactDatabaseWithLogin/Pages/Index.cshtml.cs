@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using EdgeDB;
 using System.Security.Claims;
@@ -33,32 +34,38 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        var query = $@"SELECT Contact {{ username, password, contact_role }} FILTER .username = <str>$username AND .password = <str>$password;";
+        var query = $@"SELECT Contact {{ username, password, contact_role }} FILTER .username = <str>$username;";
         var contacts = await _client.QueryAsync<Contact>(query, new Dictionary<string, object?>
         {
-            { "username", LoginInput.Username },
-            { "password", LoginInput.Password }
+            { "username", LoginInput.Username }
         });
 
         if (contacts.Count > 0)
         {
-            var claims = new List<Claim>
+            var passwordHasher = new PasswordHasher<string>();
+            string hashedPassword = passwordHasher.HashPassword(null, NewContact.Password);
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(null, contacts.First()?.Password ?? string.Empty, LoginInput.Password);
+
+            if (passwordVerificationResult == PasswordVerificationResult.Success)
             {
-                new Claim(ClaimTypes.Name, LoginInput.Username),
-                new Claim(ClaimTypes.Role, contacts.First()?.ContactRole ?? string.Empty)
-            };
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, LoginInput.Username),
+                    new Claim(ClaimTypes.Role, contacts.First()?.ContactRole ?? string.Empty)
+                };
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims,
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+                var claimsIdentity = new ClaimsIdentity(
+                    claims,
+                    CookieAuthenticationDefaults.AuthenticationScheme
+                );
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity)
-            );
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity)
+                );
 
-            return Redirect("/");
+                return Redirect("/");
+            }
         }
 
         ModelState.AddModelError("LoginError", "Invalid username or password.");
