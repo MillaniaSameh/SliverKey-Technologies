@@ -1,4 +1,5 @@
 @page "/contactlist"
+@inject HttpClient Http
 
 <PageTitle>ContactList</PageTitle>
 
@@ -80,10 +81,19 @@
 @code {
     private List<Contact> ContactsList = new();
 
-    
-    @* protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        @* forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json"); *@
         
-    } *@
+        var response = await Http.GetAsync("/fetch-contacts");
+        @* var reponseBody = await response.Content.ReadAsStringAsync(); *@
+
+        Console.WriteLine($"--------- {response.Content.ToString}");
+        @* Console.WriteLine($"--------- {reponseBody}"); *@
+
+        @* ContactsList = JsonSerializer.Deserialize<Contact[]>();
+
+        var loginInput = JsonSerializer.Deserialize<Contact[]>(requestBody); *@
+    }
    
 }

@@ -38,27 +38,21 @@
 
     private async Task FormSubmit()
     {
-        var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        var json = JsonSerializer.Serialize(LoginInput);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await Http.PostAsync("/login", content);
+
+        switch(response.StatusCode) 
         {
-            { "username", LoginInput.Username },
-            { "password", LoginInput.Password }
-        });
-
-        var response = await Http.PostAsync("http://localhost:5038/api/login", content);
-        @* var response = await Http.GetAsync("http://localhost:5038/"); *@
-
-        Console.WriteLine($"--------------------- {response}");
-
-
-        if (response.IsSuccessStatusCode)
-        {
-            // Handle success
-            Console.WriteLine("--------------------- Success");
-        }
-        else
-        {
-            // Handle error
-            Console.WriteLine("--------------------- Nope");
+            case HttpStatusCode.OK:
+                NavigationManager.NavigateTo("/contactlist");
+                break;
+            case HttpStatusCode.BadRequest:
+                ErrorMessage = "Username and password are required.";
+                break;
+            default:
+                ErrorMessage = "Invalid username or password.";
+                break;
         }
     }
 

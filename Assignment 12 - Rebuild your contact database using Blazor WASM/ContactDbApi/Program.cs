@@ -13,8 +13,21 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("authcontactdb"), c
 {
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
+builder.Services.AddCors(options =>
+{     
+    options.AddDefaultPolicy(  
+        policy =>  
+        {  
+            policy.WithOrigins("http://localhost:5172/contactlist")  
+                .AllowAnyHeader()  
+                .AllowAnyMethod();  
+        }
+    );  
+}); 
 
 var app = builder.Build();
+
+app.UseCors();
 
 app.MapGet("/", () => "Hello World!");
 
