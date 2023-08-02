@@ -1,12 +1,18 @@
+using Microsoft.AspNetCore.ResponseCompression;
 using EdgeDB;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ContactDatabase.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("authcontactdb"), config =>
@@ -14,20 +20,30 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("authcontactdb"), c
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "AllowLocalHost",
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:5172/");
-                      });
-});
-
 var app = builder.Build();
 
-app.UseCors();
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseWebAssemblyDebugging();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
-app.MapGet("/", () => "Hello World!");
+app.UseHttpsRedirection();
+
+app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapRazorPages();
+app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.MapPost("/login", async (EdgeDBClient client, HttpContext httpContext) =>
 {
@@ -75,7 +91,7 @@ app.MapPost("/login", async (EdgeDBClient client, HttpContext httpContext) =>
     return Results.Unauthorized();
 });
 
-app.MapPost("/logout", async (HttpContext httpContext) => 
+app.MapGet("/logout", async (HttpContext httpContext) =>
 {
     await httpContext.SignOutAsync(
             CookieAuthenticationDefaults.AuthenticationScheme
@@ -89,7 +105,7 @@ app.MapPost("/add-contact", async (EdgeDBClient client, HttpContext httpContext)
     var requestBody = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
     var newContact = JsonSerializer.Deserialize<Contact>(requestBody);
 
-    if(newContact != null)
+    if (newContact != null)
     {
         if (string.IsNullOrEmpty(newContact.Username)
         || string.IsNullOrEmpty(newContact.Password)
@@ -132,7 +148,7 @@ app.MapPost("/edit-contact", async (EdgeDBClient client, HttpContext httpContext
     var requestBody = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
     var contact = JsonSerializer.Deserialize<Contact>(requestBody);
 
-    if(contact != null)
+    if (contact != null)
     {
         var query = "UPDATE Contact FILTER .username = <str>$username AND .password = <str>$password SET {first_name := <str>$first_name, last_name := <str>$last_name, email := <str>$email, title := <str>$title, description := <str>$description, birth_date := <str>$birth_date, marital_status := <bool>$marital_status}";
         await client.ExecuteAsync(query, new Dictionary<string, object?>
@@ -166,50 +182,7 @@ app.MapGet("/fetch-contacts", async (EdgeDBClient client, HttpContext httpContex
             ContactsList.Add(contact);
     }
 
-    var json = JsonSerializer.Serialize(ContactsList);
-    return Results.Ok(json);
-}).RequireCors("AllowLocalHost");
+    return Results.Ok(ContactsList);
+});
 
 app.Run();
-
-public class LoginInput
-{
-    [JsonPropertyName("username")]
-    public string Username { get; set; } = "";
-
-    [JsonPropertyName("password")]
-    public string Password { get; set; } = "";
-}
-
-public class Contact
-{
-    [JsonPropertyName("username")]
-    public string Username { get; set; } = "";
-
-    [JsonPropertyName("password")]
-    public string Password { get; set; } = "";
-
-    [JsonPropertyName("contact_role")]
-    public string ContactRole { get; set; } = "Normal";
-
-    [JsonPropertyName("first_name")]
-    public string FirstName { get; set; } = "";
-
-    [JsonPropertyName("last_name")]
-    public string LastName { get; set; } = "";
-
-    [JsonPropertyName("email")]
-    public string Email { get; set; } = "";
-
-    [JsonPropertyName("title")]
-    public string Title { get; set; } = "Mr.";
-
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = "";
-
-    [JsonPropertyName("birth_date")]
-    public string BirthDate { get; set; } = "";
-
-    [JsonPropertyName("marital_status")]
-    public bool MaritalStatus { get; set; } = false;
-}

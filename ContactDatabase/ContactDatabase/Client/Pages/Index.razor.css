@@ -1,0 +1,21 @@
+﻿.login-form {
+    width: 40%;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.error-msg {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 1000px) {
+    .login-form {
+        width: 90%;
+    }
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+    .login-form {
+        width: 60%;
+    }
+}

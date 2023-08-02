@@ -1,0 +1,35 @@
+﻿@page "/contactform"
+
+@using ContactDatabase.Shared
+
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>ContactForm</PageTitle>
+
+@*@if (isAuthenticated)
+{*@
+    <ContactForm Title="Create a new contact" Contact=@Contact EditMode=false></ContactForm>
+@*}
+else
+{
+    NavigationManager.NavigateTo("/contactlist");
+}*@
+
+
+@code {
+
+    private Contact Contact = new Contact();
+
+    private bool isAuthenticated = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        Console.WriteLine($"-------------heyy2");
+
+        //isAuthenticated = authState.User.Identity.IsAuthenticated;
+    }
+
+}

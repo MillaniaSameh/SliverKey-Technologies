@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EdgeDB.Net.Driver" Version="1.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0-preview.5.23302.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\ContactDatabase.Client.csproj" />
+    <ProjectReference Include="..\Shared\ContactDatabase.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>
