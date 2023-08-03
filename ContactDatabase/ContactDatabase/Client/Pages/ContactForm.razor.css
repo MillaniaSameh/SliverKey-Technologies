@@ -3,7 +3,7 @@
 }
 
 .contact-form {
-    width: 60%;
+    width: 50%;
     margin: auto;
 }
 
@@ -19,6 +19,6 @@
 
 @media (min-width: 1000px) and (max-width: 1200px) {
     .contact-form {
-        width: 75%;
+        width: 60%;
     }
 }

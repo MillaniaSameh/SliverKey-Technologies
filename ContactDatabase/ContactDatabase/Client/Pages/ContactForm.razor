@@ -13,16 +13,6 @@
     <div class="card-body">
         <EditForm Model="Contact" OnSubmit="HandleFormSubmit">
             <div class="container">
-                <div class="row" style="@(EditMode ? "display:none;" : "")">
-                    <div class="col mb-3">
-                        <label for="usernameInput" class="form-label">Username</label>
-                        <InputText id="usernameInput" class="form-control" @bind-Value=Contact.Username />
-                    </div>
-                    <div class="col mb-3">
-                        <label for="passwordInput" class="form-label">Password</label>
-                        <InputText id="passwordInput" class="form-control" @bind-Value=Contact.Password type="password" />
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="firstNameInput" class="form-label">First Name</label>
@@ -57,20 +47,13 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="birthDateInput" class="form-label">Date Of Birth</label>
-                        <InputText id="birthDateInput" class="form-control" @bind-Value=Contact.BirthDate type="date" />
+                        <InputDate id="birthDateInput" class="form-control" @bind-Value=Contact.BirthDate />
                     </div>
                     <div class="col mb-3">
                         <label for="maritalStatusInput" class="form-label">Married</label>
                         <InputSelect class="form-select" id="maritalStatusInput" @bind-Value=Contact.MaritalStatus>
                             <option value="false" selected="@Contact.MaritalStatus">No</option>
                             <option value="true" selected="@Contact.MaritalStatus">Yes</option>
-                        </InputSelect>
-                    </div>
-                    <div class="col mb-3">
-                        <label for="roleInput" class="form-label">Role</label>
-                        <InputSelect class="form-select" id="roleInput" @bind-Value=Contact.ContactRole>
-                            <option value="Normal" selected="@((Contact.ContactRole == "Normal") ? true : false)">Normal</option>
-                            <option value="Admin" selected="@((Contact.ContactRole == "Admin") ? true : false)">Admin</option>
                         </InputSelect>
                     </div>
                 </div>
@@ -86,7 +69,6 @@
 </div>
 
 @code {
-
     [Parameter]
     public string? Title { get; set; }
     [Parameter]
@@ -101,10 +83,10 @@
         {
             var json = JsonSerializer.Serialize(Contact);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await Http.PostAsync("/edit-contact", content);
+            var response = await Http.PostAsync("/contact/edit-contact", content);
 
             if (response.IsSuccessStatusCode)
-                NavigationManager.NavigateTo("/contactlist");
+                NavigationManager.NavigateTo("/");
             else
                 ErrorMessage = "Failed to update the contact. Try again later.";
         }
@@ -112,10 +94,10 @@
         {
             var json = JsonSerializer.Serialize(Contact);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await Http.PostAsync("/add-contact", content);
+            var response = await Http.PostAsync("/contact/add-contact", content);
 
             if (response.IsSuccessStatusCode)
-                NavigationManager.NavigateTo("/contactlist");
+                NavigationManager.NavigateTo("/");
             else
                 ErrorMessage = "All fields are required.";
         }

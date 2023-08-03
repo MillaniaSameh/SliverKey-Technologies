@@ -1,35 +1,43 @@
 ﻿@page "/contactform"
+@attribute [Authorize]
 
 @using ContactDatabase.Shared
 
+@inject HttpClient Http
 @inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<PageTitle>ContactForm</PageTitle>
+<PageTitle>ContactForm</PageTitle> 
 
-@*@if (isAuthenticated)
-{*@
-    <ContactForm Title="Create a new contact" Contact=@Contact EditMode=false></ContactForm>
-@*}
-else
-{
-    NavigationManager.NavigateTo("/contactlist");
-}*@
-
+<ContactForm Title="Create a new contact" Contact=@Contact EditMode=@EditMode></ContactForm>
 
 @code {
-
     private Contact Contact = new Contact();
-
-    private bool isAuthenticated = true;
+    private bool EditMode = false;
 
     protected override async Task OnInitializedAsync()
     {
-        // var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var uri = new Uri(NavigationManager.Uri);
+        var query = uri.Query.TrimStart('?');
 
-        Console.WriteLine($"-------------heyy2");
+        var queryParams = System.Web.HttpUtility.ParseQueryString(query);
 
-        //isAuthenticated = authState.User.Identity.IsAuthenticated;
+        var editValue = queryParams["edit"];
+        string email = queryParams["email"];
+
+        if (!string.IsNullOrEmpty(editValue) && bool.TryParse(editValue, out var parsedEditValue))
+        {
+            EditMode = parsedEditValue;
+        }
+
+        if(!string.IsNullOrEmpty(email))
+        {
+            var response = await Http.GetAsync($"/contact/get-contact?email={email}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                Contact = JsonSerializer.Deserialize<Contact>(json);
+            }
+        }
     }
-
 }

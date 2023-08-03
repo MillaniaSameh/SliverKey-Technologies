@@ -1,4 +1,5 @@
 ﻿@page "/"
+@attribute [Authorize]
 
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -6,51 +7,94 @@
 @using ContactDatabase.Shared
 @using System.ComponentModel.DataAnnotations
 
-<PageTitle>Login</PageTitle>
+<PageTitle>ContactList</PageTitle>
 
-<div class="card mb-3 login-form">
-    <div class="card-body">
-        <EditForm Model="@LoginInput" OnSubmit="HandleFormSubmit">
+<div class="contact-container">
+    <h2>Contact List</h2>
+    <p>Type something in the input field to search the table for first names, last names or emails.</p>
+    <input class="form-control" id="myInput" type="text" placeholder="Search...">
+    <br>
 
-            <div class="mb-3">
-                <label for="usernameInput" class="form-label">Username</label>
-                <InputText id="usernameInput" class="form-control" @bind-Value="LoginInput.Username" required/>
-            </div>
+    <table class="table table-striped table-responsive">
+        <thead>
+            <tr class="table-dark">
+                <th scope="col"></th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+            @if (ContactsList.Count > 0)
+            {
+                @for (int i = 0; i < ContactsList.Count; i++)
+                {
+                    var contact = ContactsList[i];
 
-            <div class="mb-3">
-                <label for="passwordInput" class="form-label">Password</label>
-                <InputText id="passwordInput" class="form-control" @bind-Value="LoginInput.Password" type="password" required/>
-            </div>
+                    var rowClass = i % 2 == 0 ? "even-row" : "odd-row";
+                    var married = contact.MaritalStatus == true ? "married" : "not married";
 
-            <div class="text-danger error-msg">@ErrorMessage</div>
-            <button type="submit" class="btn btn-primary">Login</button>
-
-        </EditForm>
-    </div>
+                    <tr class="@rowClass search-filter" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@i" role="button" data-bs-target="#collapseArea-@i">
+                        <th scope="row">@(i + 1)</th>
+                        <td>@contact.FirstName</td>
+                        <td>@contact.LastName</td>
+                        <td>@contact.Email</td>
+                        <td>
+                            <button class="btn btn-dark" @onclick="() => HandleEditContact(contact.Email)">Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding: 0;">
+                            <div class="collapse show" id="collapseArea-@i">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@contact.Title @contact.FirstName @contact.LastName</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Date of birth: @contact.BirthDate.ToString("yyyy-MM-dd")</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Marital status: @married</h6>
+                                        <p class="card-text">@contact.Description</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">No contacts to show.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
-
 @code {
-    private LoginInput LoginInput = new();
-    private string ErrorMessage { get; set; } = "";
+    private List<Contact> ContactsList = new();
+    private string ErrorMessage = "";
 
-    private async Task HandleFormSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        var json = JsonSerializer.Serialize(LoginInput);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await Http.PostAsync("/login", content);
+        var response = await Http.GetAsync("/contact/fetch-contacts");
 
-        switch (response.StatusCode)
+        if (response.IsSuccessStatusCode)
         {
-            case HttpStatusCode.OK:
-                NavigationManager.NavigateTo("/contactlist");
-                break;
-            case HttpStatusCode.BadRequest:
-                ErrorMessage = "Username and password are required.";
-                break;
-            default:
-                ErrorMessage = "Invalid username or password.";
-                break;
+            string json = await response.Content.ReadAsStringAsync();
+
+            ContactsList = JsonSerializer.Deserialize<List<Contact>>(json);
+
+            if (ContactsList != null && ContactsList.Count < 0)
+                ErrorMessage = "No contacts to show.";
         }
+        else
+        {
+            ErrorMessage = "Failed to fetch the contacts.";
+        }
+    }
+
+    private void HandleEditContact(string email)
+    {
+        NavigationManager.NavigateTo($"/contactform?edit={true}&email={email}");
     }
 }

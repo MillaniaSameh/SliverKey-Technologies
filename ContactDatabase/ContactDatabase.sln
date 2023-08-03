@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactDatabase.Server", "ContactDatabase\Server\ContactDatabase.Server.csproj", "{B93022F3-0A51-45A8-8C4C-468ADCD4114D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactDatabase.Server", "ContactDatabase\Server\ContactDatabase.Server.csproj", "{B93022F3-0A51-45A8-8C4C-468ADCD4114D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactDatabase.Client", "ContactDatabase\Client\ContactDatabase.Client.csproj", "{CE12D603-F0BE-4C11-AF70-9C90C399BE0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactDatabase.Client", "ContactDatabase\Client\ContactDatabase.Client.csproj", "{CE12D603-F0BE-4C11-AF70-9C90C399BE0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactDatabase.Shared", "ContactDatabase\Shared\ContactDatabase.Shared.csproj", "{9D17443F-9096-46AB-A380-8015B1D84B50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactDatabase.Shared", "ContactDatabase\Shared\ContactDatabase.Shared.csproj", "{9D17443F-9096-46AB-A380-8015B1D84B50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,21 +1,25 @@
-﻿.login-form {
-    width: 40%;
+﻿.contact-container {
+    width: 70%;
     margin: auto;
     margin-top: 20px;
 }
 
-.error-msg {
-    margin-bottom: 10px;
+.odd-row {
+    background-color: #f2f2f2;
+}
+
+.even-row {
+    background-color: white;
 }
 
 @media (max-width: 1000px) {
-    .login-form {
+    .contact-container {
         width: 90%;
     }
 }
 
 @media (min-width: 1000px) and (max-width: 1200px) {
-    .login-form {
-        width: 60%;
+    .contact-container {
+        width: 80%;
     }
 }
