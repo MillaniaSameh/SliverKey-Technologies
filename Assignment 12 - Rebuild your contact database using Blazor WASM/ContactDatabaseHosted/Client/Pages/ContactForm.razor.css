@@ -1,0 +1,24 @@
+﻿.form-title {
+    margin-top: 20px;
+}
+
+.contact-form {
+    width: 50%;
+    margin: auto;
+}
+
+.error-msg {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 1000px) {
+    .contact-form {
+        width: 90%;
+    }
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+    .contact-form {
+        width: 60%;
+    }
+}

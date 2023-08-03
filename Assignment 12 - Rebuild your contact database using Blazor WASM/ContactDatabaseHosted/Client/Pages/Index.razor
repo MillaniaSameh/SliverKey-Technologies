@@ -1,0 +1,100 @@
+﻿@page "/"
+@attribute [Authorize]
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@using ContactDatabaseHosted.Shared
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>ContactList</PageTitle>
+
+<div class="contact-container">
+    <h2>Contact List</h2>
+    <p>Type something in the input field to search the table for first names, last names or emails.</p>
+    <input class="form-control" id="myInput" type="text" placeholder="Search...">
+    <br>
+
+    <table class="table table-striped table-responsive">
+        <thead>
+            <tr class="table-dark">
+                <th scope="col"></th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+            @if (ContactsList.Count > 0)
+            {
+                @for (int i = 0; i < ContactsList.Count; i++)
+                {
+                    var contact = ContactsList[i];
+
+                    var rowClass = i % 2 == 0 ? "even-row" : "odd-row";
+                    var married = contact.MaritalStatus == true ? "married" : "not married";
+
+                    <tr class="@rowClass search-filter" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@i" role="button" data-bs-target="#collapseArea-@i">
+                        <th scope="row">@(i + 1)</th>
+                        <td>@contact.FirstName</td>
+                        <td>@contact.LastName</td>
+                        <td>@contact.Email</td>
+                        <td>
+                            <button class="btn btn-dark" @onclick="() => HandleEditContact(contact.Email)">Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding: 0;">
+                            <div class="collapse show" id="collapseArea-@i">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@contact.Title @contact.FirstName @contact.LastName</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Date of birth: @contact.BirthDate.ToString("yyyy-MM-dd")</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Marital status: @married</h6>
+                                        <p class="card-text">@contact.Description</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">No contacts to show.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<Contact> ContactsList = new();
+    private string ErrorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync("/contact/fetch-contacts");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string json = await response.Content.ReadAsStringAsync();
+
+            ContactsList = JsonSerializer.Deserialize<List<Contact>>(json);
+
+            if (ContactsList != null && ContactsList.Count < 0)
+                ErrorMessage = "No contacts to show.";
+        }
+        else
+        {
+            ErrorMessage = "Failed to fetch the contacts.";
+        }
+    }
+
+    private void HandleEditContact(string email)
+    {
+        NavigationManager.NavigateTo($"/contactform?edit={true}&email={email}");
+    }
+}

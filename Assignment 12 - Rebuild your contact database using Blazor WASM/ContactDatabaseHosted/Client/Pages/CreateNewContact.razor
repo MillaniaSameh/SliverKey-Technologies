@@ -1,0 +1,43 @@
+﻿@page "/contactform"
+@attribute [Authorize]
+
+@using ContactDatabaseHosted.Shared
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>ContactForm</PageTitle> 
+
+<ContactForm Title="Create a new contact" Contact=@Contact EditMode=@EditMode></ContactForm>
+
+@code {
+    private Contact Contact = new Contact();
+    private bool EditMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var query = uri.Query.TrimStart('?');
+
+        var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+
+        var editValue = queryParams["edit"];
+        string email = queryParams["email"];
+
+        if (!string.IsNullOrEmpty(editValue) && bool.TryParse(editValue, out var parsedEditValue))
+        {
+            EditMode = parsedEditValue;
+        }
+
+        if(!string.IsNullOrEmpty(email))
+        {
+            var response = await Http.GetAsync($"/contact/get-contact?email={email}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                Contact = JsonSerializer.Deserialize<Contact>(json);
+            }
+        }
+    }
+}
