@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="EdgeDB.Net.Driver" Version="1.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0-preview.5.23302.2" />
   </ItemGroup>

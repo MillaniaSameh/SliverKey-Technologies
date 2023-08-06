@@ -2,17 +2,19 @@
 @attribute [Authorize]
 
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
 @using ContactDatabase.Shared
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <PageTitle>ContactList</PageTitle>
 
 <div class="contact-container">
     <h2>Contact List</h2>
     <p>Type something in the input field to search the table for first names, last names or emails.</p>
-    <input class="form-control" id="myInput" type="text" placeholder="Search...">
+    <input class="form-control" id="myInput" type="text" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" @bind:after="() => Search()">
     <br>
 
     <table class="table table-striped table-responsive">
@@ -31,22 +33,24 @@
                 @for (int i = 0; i < ContactsList.Count; i++)
                 {
                     var contact = ContactsList[i];
-
+                    var currentIndex = i;
                     var rowClass = i % 2 == 0 ? "even-row" : "odd-row";
                     var married = contact.MaritalStatus == true ? "married" : "not married";
 
-                    <tr class="@rowClass search-filter" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseArea-@i" role="button" data-bs-target="#collapseArea-@i">
+                    <tr class="@rowClass" role="button" @onclick="() => ToggleCollapse(currentIndex)">
                         <th scope="row">@(i + 1)</th>
                         <td>@contact.FirstName</td>
                         <td>@contact.LastName</td>
                         <td>@contact.Email</td>
                         <td>
-                            <button class="btn btn-dark" @onclick="() => HandleEditContact(contact.Email)">Edit</button>
+                            <AuthorizeView Roles="Admin">
+                                <button class="btn btn-dark" @onclick="() => HandleEditContact(contact.Email)">Edit</button>
+                            </AuthorizeView>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="5" style="padding: 0;">
-                            <div class="collapse show" id="collapseArea-@i">
+                            <div class="collapse" id="collapseArea-@i">
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">@contact.Title @contact.FirstName @contact.LastName</h5>
@@ -73,19 +77,46 @@
 @code {
     private List<Contact> ContactsList = new();
     private string ErrorMessage = "";
+    private string SearchTerm = "";
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync("/contact/fetch-contacts");
+        try
+        {
+            await FetchContacts("/contact/fetch-contacts");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    private void HandleEditContact(string email)
+    {
+        NavigationManager.NavigateTo($"/contactform?edit={true}&email={email}");
+    }
+
+    private async Task Search()
+    {
+        Console.WriteLine($"------------- {SearchTerm}");
+
+        if (!string.IsNullOrEmpty(SearchTerm))
+            await FetchContacts($"/contact/search-contacts?searchTerm={SearchTerm}");
+        else
+            await FetchContacts("/contact/fetch-contacts");
+    }
+
+    private async Task FetchContacts(string requestUri)
+    {
+        var response = await Http.GetAsync(requestUri);
 
         if (response.IsSuccessStatusCode)
         {
             string json = await response.Content.ReadAsStringAsync();
-
             ContactsList = JsonSerializer.Deserialize<List<Contact>>(json);
 
             if (ContactsList != null && ContactsList.Count < 0)
-                ErrorMessage = "No contacts to show.";
+                ErrorMessage = "No contacts found.";
         }
         else
         {
@@ -93,8 +124,8 @@
         }
     }
 
-    private void HandleEditContact(string email)
+    private async Task ToggleCollapse(int index)
     {
-        NavigationManager.NavigateTo($"/contactform?edit={true}&email={email}");
+        await JSRuntime.InvokeVoidAsync("toggleCollapse", $"collapseArea-{index}");
     }
 }

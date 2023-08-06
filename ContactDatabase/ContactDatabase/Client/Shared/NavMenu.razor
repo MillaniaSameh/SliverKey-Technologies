@@ -1,11 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
-@inject HttpClient Http
-@inject NavigationManager NavigationManager
-@inject SignOutSessionStateManager SignOutManager
-
-<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ContactDatabase</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -16,31 +9,17 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="oi oi-people" aria-hidden="true"></span> Home
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="contactform">
-                        <span class="oi oi-plus" aria-hidden="true"></span> Add Contact
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="#" @onclick="BeginSignOut">
-                        <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
-                    </NavLink>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="authentication/login">
-                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-people" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <AuthorizeView Roles="Admin">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="contactform">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add Contact
+                </NavLink>
+            </div>
         </AuthorizeView>
     </nav>
 </div>
@@ -53,21 +32,5 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-    }
-
-    private async Task HandleLogout()
-    {
-        var response = await Http.GetAsync("/logout");
-
-        if (response.IsSuccessStatusCode)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-    }
-
-    private async Task BeginSignOut(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        NavigationManager.NavigateTo("authentication/logout");
     }
 }

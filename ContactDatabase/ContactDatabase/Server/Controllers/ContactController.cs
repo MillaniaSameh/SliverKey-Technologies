@@ -1,13 +1,14 @@
 ﻿using ContactDatabase.Shared;
 using EdgeDB;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.ConstrainedExecution;
+using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 
 namespace ContactDatabase.Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class ContactController : Controller
 {
     private readonly EdgeDBClient _client;
@@ -18,6 +19,7 @@ public class ContactController : Controller
     }
 
     [HttpPost("add-contact")]
+    [Authorize(Policy = "CreateAccess")]
     public async Task<IActionResult> AddContact()
     {
         var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
@@ -52,6 +54,7 @@ public class ContactController : Controller
     }
 
     [HttpPost("edit-contact")]
+    [Authorize(Policy = "UpdateAccess")]
     public async Task<IActionResult> EditContact()
     {
         var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
@@ -90,19 +93,35 @@ public class ContactController : Controller
         return BadRequest();
     }
 
+    [HttpGet("search-contacts")]
+    public async Task<IActionResult> SearchContacts([FromQuery] string searchTerm)
+    {
+        if(!string.IsNullOrEmpty(searchTerm))
+        {
+            var query = "SELECT Contact {*} FILTER .first_name ILIKE '%' ++ <str>$first_name ++ '%' OR .last_name ILIKE '%' ++ <str>$last_name ++ '%' OR .email ILIKE '%' ++ <str>$email ++ '%'";
+            var contacts = await _client.QueryAsync<Contact>(query, new Dictionary<string, object?>
+            {
+                { "first_name", searchTerm},
+                { "last_name", searchTerm },
+                { "email", searchTerm }
+            });
+
+            return Ok(contacts.ToList());
+        }
+
+        return BadRequest();
+    }
+
     [HttpGet("fetch-contacts")]
     public async Task<IActionResult> FetchContacts()
     {
         var contacts = await _client.QueryAsync<Contact>("SELECT Contact {*};");
 
-        List<Contact> ContactsList = new();
-
-        foreach (var contact in contacts)
+        if (contacts != null)
         {
-            if (contact != null)
-                ContactsList.Add(contact);
+            return Ok(contacts.ToList());
         }
 
-        return Ok(ContactsList);
+        return BadRequest();
     }
 }
