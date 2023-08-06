@@ -6,6 +6,7 @@
 
 @using ContactDatabaseHosted.Shared
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <PageTitle>ContactList</PageTitle>
 
@@ -76,20 +77,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync("/contact/fetch-contacts");
-
-        if (response.IsSuccessStatusCode)
+        try 
         {
-            string json = await response.Content.ReadAsStringAsync();
+            var response = await Http.GetAsync("/contact/fetch-contacts");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                ContactsList = JsonSerializer.Deserialize<List<Contact>>(json);
 
-            ContactsList = JsonSerializer.Deserialize<List<Contact>>(json);
-
-            if (ContactsList != null && ContactsList.Count < 0)
-                ErrorMessage = "No contacts to show.";
+                if (ContactsList != null && ContactsList.Count < 0)
+                    ErrorMessage = "No contacts to show.";
+            }
+            else
+            {
+                ErrorMessage = "Failed to fetch the contacts.";
+            }
         }
-        else
+        catch(AccessTokenNotAvailableException exception)
         {
-            ErrorMessage = "Failed to fetch the contacts.";
+            exception.Redirect();
         }
     }
 

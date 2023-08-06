@@ -55,16 +55,6 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    private async Task HandleLogout()
-    {
-        var response = await Http.GetAsync("/logout");
-
-        if (response.IsSuccessStatusCode)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-    }
-
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();

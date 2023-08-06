@@ -1,6 +1,7 @@
 ﻿using ContactDatabaseHosted.Shared;
 using EdgeDB;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Runtime.ConstrainedExecution;
 using System.Text.Json;
 
@@ -8,6 +9,7 @@ namespace ContactDatabase.Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class ContactController : Controller
 {
     private readonly EdgeDBClient _client;

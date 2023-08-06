@@ -1,5 +1,5 @@
 ﻿@page "/contactform"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "admin")]
 
 @using ContactDatabaseHosted.Shared
 
