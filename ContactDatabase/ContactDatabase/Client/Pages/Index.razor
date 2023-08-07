@@ -4,6 +4,7 @@
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthState
 
 @using ContactDatabase.Shared
 @using System.ComponentModel.DataAnnotations
@@ -98,8 +99,6 @@
 
     private async Task Search()
     {
-        Console.WriteLine($"------------- {SearchTerm}");
-
         if (!string.IsNullOrEmpty(SearchTerm))
             await FetchContacts($"/contact/search-contacts?searchTerm={SearchTerm}");
         else

@@ -4,7 +4,7 @@
 @inject NavigationManager NavigationManager
 
 <div class="text-center form-title">
-    <h2>@Title</h2>
+    <h2>@(EditMode ? "Edit an existing contact" : "Create a new contact")</h2>
 </div>
 
 <br >
@@ -69,8 +69,6 @@
 </div>
 
 @code {
-    [Parameter]
-    public string? Title { get; set; }
     [Parameter]
     public Contact? Contact { get; set; }
     [Parameter]

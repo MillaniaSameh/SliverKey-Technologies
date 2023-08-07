@@ -2,6 +2,7 @@ using ContactDatabase.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,7 +22,7 @@ builder.Services.AddOidcAuthentication(options =>
     options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
 });
 
-//builder.Services.AddScoped(typeof(AccountClaimsPrincipalFactory<RemoteUserAccount>),
-//  typeof(CustomAccountFactory));
+builder.Services.AddScoped(typeof(AccountClaimsPrincipalFactory<RemoteUserAccount>),
+  typeof(CustomAccountFactory));
 
 await builder.Build().RunAsync();

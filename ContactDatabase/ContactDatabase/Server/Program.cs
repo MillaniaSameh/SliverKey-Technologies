@@ -5,14 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-builder.Services.AddHttpClient();
-builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("db"), config =>
-{
-    config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
-});
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
     {
@@ -30,6 +22,14 @@ builder.Services.AddAuthorization(options =>
                       policy.RequireClaim("permissions", "add:contact"));
     options.AddPolicy("UpdateAccess", policy =>
                       policy.RequireClaim("permissions", "edit:contact"));
+});
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
+builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("db"), config =>
+{
+    config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
 
 var app = builder.Build();
