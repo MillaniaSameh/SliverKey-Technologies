@@ -28,6 +28,8 @@
     <Content Remove="resources\shared\AccessControl.json" />
     <Content Remove="resources\shared\NavMenu-ar.json" />
     <Content Remove="Resources\Shared\NavMenu.json" />
+    <Content Remove="resources\shared\SelectLanguage-ar.json" />
+    <Content Remove="resources\shared\SelectLanguage.json" />
   </ItemGroup>
 
 </Project>
