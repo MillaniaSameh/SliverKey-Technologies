@@ -1,0 +1,18 @@
+﻿{
+  "create_page_title": "أنشئ جهة اتصال جديدة",
+  "edit_page_title": "تحديث جهة اتصال",
+  "first_name": "الاسم الأول",
+  "last_name": "اسم العائلة",
+  "email": "البريد الإلكتروني",
+  "title": "اللقب",
+  "mr": "السيد",
+  "mrs": "السّيدة",
+  "miss": "انسة",
+  "description": "الوصف",
+  "birth_date": "تاريخ الميلاد",
+  "marital_status": "متزوج",
+  "yes": "نعم",
+  "no": "لا",
+  "add_contact": "إضافة جهة اتصال",
+  "edit_contact": "تحديث جهة الاتصال"
+}

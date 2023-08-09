@@ -1,10 +1,11 @@
 ﻿@using ContactDatabase.Shared
 
 @inject HttpClient Http
+@inject IStringLocalizer<ContactForm> L
 @inject NavigationManager NavigationManager
 
 <div class="text-center form-title">
-    <h2>@(EditMode ? "Edit an existing contact" : "Create a new contact")</h2>
+    <h2>@(EditMode ? @L["edit_page_title"] : @L["create_page_title"])</h2>
 </div>
 
 <br >
@@ -15,52 +16,51 @@
             <div class="container">
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="firstNameInput" class="form-label">First Name</label>
+                        <label for="firstNameInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["first_name"]</label>
                         <InputText id="firstNameInput" class="form-control" @bind-Value=Contact.FirstName />
                     </div>
                     <div class="col mb-3">
-                        <label for="lastNameInput" class="form-label">Last Name</label>
+                        <label for="lastNameInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["last_name"]</label>
                         <InputText id="lastNameInput" class="form-control" @bind-Value=Contact.LastName />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="emailInput" class="form-label">Email</label>
+                        <label for="emailInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["email"]</label>
                         <InputText id="emailInput" class="form-control" @bind-Value=Contact.Email type="email"/>
                     </div>
                     <div class="col mb-3">
-                        <label for="titleInput" class="form-label">Title</label>
+                        <label for="titleInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["title"]</label>
                         <InputSelect class="form-select" id="titleInput" @bind-Value=Contact.Title>
-                            <option value="Mr." selected="@((Contact.Title == "Mr.") ? true : false)">Mr.</option>
-                            <option value="Mrs." selected="@((Contact.Title == "Mrs.") ? true : false)">Mrs.</option>
-                            <option value="Miss" selected="@((Contact.Title == "Miss") ? true : false)">Miss</option>
-                            <option value="Ms." selected="@((Contact.Title == "Ms.") ? true : false)">Ms.</option>
+                            <option class="@(Language=="ar" ? "arabic": "")" value="Mr." selected="@((Contact.Title == "Mr.") ? true : false)">@L["mr"]</option>
+                            <option class="@(Language=="ar" ? "arabic": "")" value="Mrs." selected="@((Contact.Title == "Mrs.") ? true : false)">@L["mrs"]</option>
+                            <option class="@(Language=="ar" ? "arabic": "")" value="Miss" selected="@((Contact.Title == "Miss") ? true : false)">@L["miss"]</option>
                         </InputSelect>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="descriptionInput" class="form-label">Description</label>
+                        <label for="descriptionInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["description"]</label>
                         <textarea class="form-control" id="descriptionInput" rows="3" @bind=Contact.Description>@Contact.Description</textarea>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="birthDateInput" class="form-label">Date Of Birth</label>
+                        <label for="birthDateInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["birth_date"]</label>
                         <InputDate id="birthDateInput" class="form-control" @bind-Value=Contact.BirthDate />
                     </div>
                     <div class="col mb-3">
-                        <label for="maritalStatusInput" class="form-label">Married</label>
+                        <label for="maritalStatusInput" class="form-label @(Language=="ar" ? "arabic": "")">@L["marital_status"]</label>
                         <InputSelect class="form-select" id="maritalStatusInput" @bind-Value=Contact.MaritalStatus>
-                            <option value="false" selected="@Contact.MaritalStatus">No</option>
-                            <option value="true" selected="@Contact.MaritalStatus">Yes</option>
+                            <option class="@(Language=="ar" ? "arabic": "")" value="false" selected="@Contact.MaritalStatus">@L["no"]</option>
+                            <option class="@(Language=="ar" ? "arabic": "")" value="true" selected="@Contact.MaritalStatus">@L["yes"]</option>
                         </InputSelect>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col @(Language=="ar" ? "arabic": "")">
                         <div class="text-danger error-msg">@ErrorMessage</div>
-                        <button type="submit" class="btn btn-primary">@(EditMode ? "Edit Contact" : "Add Contact")</button>
+                        <button type="submit" class="btn btn-primary">@(EditMode ? @L["edit_contact"] : @L["add_contact"])</button>
                     </div>
                 </div>
             </div>
@@ -74,6 +74,7 @@
     [Parameter]
     public bool EditMode { get; set; }
     private string ErrorMessage { get; set; } = "";
+    string Language = CultureInfo.CurrentCulture.Name.ToString();
 
     private async Task HandleFormSubmit()
     {

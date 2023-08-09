@@ -36,6 +36,11 @@
                 collapseElement.classList.toggle('show');
             }
         };
+
+        window.switchCulture = {
+            get: () => localStorage['CurrentCulture'],
+            set: (value) => localStorage['CurrentCulture'] = value
+        };
     </script>
 </body>
 

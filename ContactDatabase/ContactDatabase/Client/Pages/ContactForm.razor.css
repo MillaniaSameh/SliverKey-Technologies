@@ -11,6 +11,11 @@
     margin-bottom: 10px;
 }
 
+.arabic {
+    direction: rtl;
+    display: flex;
+}
+
 @media (max-width: 1000px) {
     .contact-form {
         width: 90%;

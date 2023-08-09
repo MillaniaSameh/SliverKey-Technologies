@@ -1,16 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
+@inject IStringLocalizer<AccessControl> L
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name!
-        <a href="#" @onclick="BeginSignOut">Log out</a>
+        @if (CultureInfo.CurrentCulture.Name == "ar")
+        {
+            <span>!@context.User.Identity.Name, @L["hello"]</span>
+        }
+        else
+        {
+            <span>@L["hello"], @context.User.Identity.Name!</span>
+        }
+        <a href="#" @onclick="BeginSignOut">@L["logout"]</a>
+        <SelectLanguage />
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+        <a href="authentication/login">@L["login"]</a>
     </NotAuthorized>
 </AuthorizeView>
 

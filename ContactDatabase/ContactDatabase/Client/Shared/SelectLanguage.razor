@@ -1,0 +1,30 @@
+﻿@inject IJSRuntime JSRuntime;
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<SelectLanguage> L
+
+
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+
+<div style="margin-left: 20px;">
+    <select class="form-select" @bind="Culture">
+        <option value="en">@L["en"]</option>
+        <option value="ar">@L["ar"]</option>
+    </select>
+</div>
+
+@code {
+    CultureInfo Culture
+    {
+        get => CultureInfo.CurrentCulture;
+        set
+        {
+            if (CultureInfo.CurrentCulture != value)
+            {
+                var js = (IJSInProcessRuntime)JSRuntime;
+                js.InvokeVoid("switchCulture.set", value.Name);
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
+        }
+    }
+}

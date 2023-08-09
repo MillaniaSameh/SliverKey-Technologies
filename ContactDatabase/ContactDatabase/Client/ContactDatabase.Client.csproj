@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,10 +13,21 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="7.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-preview.5.23302.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="SoloX.BlazorJsonLocalization" Version="2.0.0-alpha.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\ContactDatabase.Shared.csproj" />
+	<EmbeddedResource Include="Resources\**\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="resources\App-ar.json" />
+    <Content Remove="resources\App.json" />
+    <Content Remove="resources\shared\AccessControl-ar.json" />
+    <Content Remove="resources\shared\AccessControl.json" />
+    <Content Remove="resources\shared\NavMenu-ar.json" />
+    <Content Remove="Resources\Shared\NavMenu.json" />
   </ItemGroup>
 
 </Project>

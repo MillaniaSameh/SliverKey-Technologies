@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
+<div class="page @(Language=="ar" ? "arabic": "")">
     <div class="sidebar">
         <NavMenu />
     </div>
@@ -14,3 +14,7 @@
         </article>
     </main>
 </div>
+
+@code {
+    string Language = CultureInfo.CurrentCulture.Name.ToString();
+}

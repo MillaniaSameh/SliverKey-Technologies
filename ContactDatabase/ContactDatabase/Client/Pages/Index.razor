@@ -3,6 +3,7 @@
 
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
+@inject IStringLocalizer<Index> L
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthState
 
@@ -13,18 +14,18 @@
 <PageTitle>ContactList</PageTitle>
 
 <div class="contact-container">
-    <h2>Contact List</h2>
-    <p>Type something in the input field to search the table for first names, last names or emails.</p>
-    <input class="form-control" id="myInput" type="text" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" @bind:after="() => Search()">
+    <h2 class="@(Language=="ar" ? "arabic": "")">@L["page_title"]</h2>
+    <p class="@(Language=="ar" ? "arabic": "")">@L["search_instruction"]</p>
+    <input class="form-control @(Language=="ar" ? "arabic": "")" id="myInput" type="text" placeholder="@L["search"] ..." @bind="SearchTerm" @bind:event="oninput" @bind:after="() => Search()">
     <br>
 
-    <table class="table table-striped table-responsive">
+    <table class="table table-striped table-responsive @(Language=="ar" ? "arabic": "")">
         <thead>
             <tr class="table-dark">
                 <th scope="col"></th>
-                <th scope="col">First Name</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">Email</th>
+                <th scope="col">@L["first_name"]</th>
+                <th scope="col">@L["last_name"]</th>
+                <th scope="col">@L["email"]</th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -36,7 +37,7 @@
                     var contact = ContactsList[i];
                     var currentIndex = i;
                     var rowClass = i % 2 == 0 ? "even-row" : "odd-row";
-                    var married = contact.MaritalStatus == true ? "married" : "not married";
+                    var married = contact.MaritalStatus == true ? @L["married"] : @L["not_married"];
 
                     <tr class="@rowClass" role="button" @onclick="() => ToggleCollapse(currentIndex)">
                         <th scope="row">@(i + 1)</th>
@@ -45,7 +46,7 @@
                         <td>@contact.Email</td>
                         <td>
                             <AuthorizeView Roles="Admin">
-                                <button class="btn btn-dark" @onclick="() => HandleEditContact(contact.Email)">Edit</button>
+                                <button class="btn btn-dark" @onclick="() => HandleEditContact(contact.Email)">@L["edit"]</button>
                             </AuthorizeView>
                         </td>
                     </tr>
@@ -55,8 +56,8 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">@contact.Title @contact.FirstName @contact.LastName</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Date of birth: @contact.BirthDate.ToString("yyyy-MM-dd")</h6>
-                                        <h6 class="card-subtitle mb-2 text-muted">Marital status: @married</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">@L["birth_date"]: @contact.BirthDate.ToString("yyyy-MM-dd")</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">@L["marital_status"]: @married</h6>
                                         <p class="card-text">@contact.Description</p>
                                     </div>
                                 </div>
@@ -68,7 +69,7 @@
             else
             {
                 <tr>
-                    <td colspan="5">No contacts to show.</td>
+                    <td colspan="5" class="@(Language=="ar" ? "arabic": "")">@L["no_contact"]</td>
                 </tr>
             }
         </tbody>
@@ -79,6 +80,7 @@
     private List<Contact> ContactsList = new();
     private string ErrorMessage = "";
     private string SearchTerm = "";
+    string Language = CultureInfo.CurrentCulture.Name.ToString();
 
     protected override async Task OnInitializedAsync()
     {

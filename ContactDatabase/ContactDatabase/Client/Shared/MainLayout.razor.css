@@ -4,6 +4,10 @@
     flex-direction: column;
 }
 
+.arabic {
+    flex-direction: row-reverse;
+}
+
 main {
     flex: 1;
 }
@@ -53,6 +57,10 @@ main {
 @media (min-width: 641px) {
     .page {
         flex-direction: row;
+    }
+
+    .arabic {
+        flex-direction: row-reverse;
     }
 
     .sidebar {

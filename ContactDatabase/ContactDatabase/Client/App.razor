@@ -1,13 +1,15 @@
-﻿<CascadingAuthenticationState>
+﻿@inject IStringLocalizer<App> L
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <Authorizing>
-                    <p>Determining session state, please wait...</p>
+                    <p style="@(Language=="ar" ? "direction: rtl": "")">@L["determine_state"]</p>
                 </Authorizing>
                 <NotAuthorized>
-                    <h1>Sorry</h1>
-                    <p>You're not authorized to reach this page. You need to log in first.</p>
+                    <h1 style="@(Language=="ar" ? "direction: rtl": "")">@L["sorry"]</h1>
+                    <p style="@(Language=="ar" ? "direction: rtl": "")">@L["not_authorized"]</p>
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -15,8 +17,12 @@
         <NotFound>
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
+                <p role="alert" style="@(Language=="ar" ? "direction: rtl": "")">@L["not_found"]</p>
             </LayoutView>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    string Language = CultureInfo.CurrentCulture.Name.ToString();
+}
