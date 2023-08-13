@@ -1,18 +1,18 @@
 {
-  "create_page_title": "Create a new contact",
-  "edit_page_title": "Edit an existing contact",
-  "first_name": "First Name",
-  "last_name": "Last Name",
+  "create-page-title": "Create a new contact",
+  "edit-page-title": "Edit an existing contact",
+  "first-name": "First Name",
+  "last-name": "Last Name",
   "email": "Email",
   "title": "Title",
   "mr": "Mr.",
   "mrs": "Mrs.",
   "miss": "Miss",
   "description": "Description",
-  "birth_date": "Date of birth",
+  "birth-date": "Date of birth",
   "marital_status": "Married",
   "yes": "Yes",
   "no": "No",
-  "add_contact": "Add Contact",
-  "edit_contact": "Edit Contact"
+  "add-contact": "Add Contact",
+  "edit-contact": "Edit Contact"
 }

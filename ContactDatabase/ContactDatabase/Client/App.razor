@@ -5,11 +5,11 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <Authorizing>
-                    <p style="@(Language=="ar" ? "direction: rtl": "")">@L["determine_state"]</p>
+                    <p style="@(_language=="ar" ? "direction: rtl": "")">@L["determine-state"]</p>
                 </Authorizing>
                 <NotAuthorized>
-                    <h1 style="@(Language=="ar" ? "direction: rtl": "")">@L["sorry"]</h1>
-                    <p style="@(Language=="ar" ? "direction: rtl": "")">@L["not_authorized"]</p>
+                    <h1 style="@(_language=="ar" ? "direction: rtl": "")">@L["sorry"]</h1>
+                    <p style="@(_language=="ar" ? "direction: rtl": "")">@L["not-authorized"]</p>
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -17,12 +17,12 @@
         <NotFound>
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert" style="@(Language=="ar" ? "direction: rtl": "")">@L["not_found"]</p>
+                <p role="alert" style="@(_language=="ar" ? "direction: rtl": "")">@L["not-found"]</p>
             </LayoutView>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
 
 @code {
-    string Language = CultureInfo.CurrentCulture.Name.ToString();
+    private string _language = CultureInfo.CurrentCulture.Name.ToString();
 }

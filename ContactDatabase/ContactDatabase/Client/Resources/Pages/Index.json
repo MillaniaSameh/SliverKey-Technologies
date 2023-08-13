@@ -1,14 +1,14 @@
 {
-  "page_title": "Contact List",
+  "page-title": "Contact List",
   "search": "Search",
-  "search_instruction": "Type something in the input field to search the table for first names, last names or emails.",
-  "first_name": "First Name",
-  "last_name": "Last Name",
+  "search-instruction": "Type something in the input field to search the table for first names, last names or emails.",
+  "first-name": "First Name",
+  "last-name": "Last Name",
   "email": "Email",
-  "birth_date": "Date of birth",
-  "marital_status": "Marital Status",
+  "birth-date": "Date of birth",
+  "marital-status": "Marital Status",
   "married": "married",
-  "not_married": "not married",
+  "not-married": "not married",
   "edit": "Edit",
-  "no_contact": "No contacts to show."
+  "no-contact": "No contacts to show."
 }

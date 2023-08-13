@@ -8,11 +8,11 @@
 
 <PageTitle>ContactForm</PageTitle> 
 
-<ContactForm Contact=@Contact EditMode=@EditMode></ContactForm>
+<ContactForm Contact=@_contact EditMode=@_editMode></ContactForm>
 
 @code {
-    private Contact Contact = new Contact();
-    private bool EditMode = false;
+    private Contact _contact = new Contact();
+    private bool _editMode = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,7 +26,7 @@
 
         if (!string.IsNullOrEmpty(editValue) && bool.TryParse(editValue, out var parsedEditValue))
         {
-            EditMode = parsedEditValue;
+            _editMode = parsedEditValue;
         }
 
         if(!string.IsNullOrEmpty(email))
@@ -36,7 +36,7 @@
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                Contact = JsonSerializer.Deserialize<Contact>(json);
+                _contact = JsonSerializer.Deserialize<Contact>(json);
             }
         }
     }
