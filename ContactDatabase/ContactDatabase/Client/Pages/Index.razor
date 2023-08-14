@@ -102,7 +102,7 @@
     private async Task Search()
     {
         if (!string.IsNullOrEmpty(_searchTerm))
-            await FetchContacts($"/contact/search-contacts?_searchTerm={_searchTerm}");
+            await FetchContacts($"/contact/search-contacts?searchTerm={_searchTerm}");
         else
             await FetchContacts("/contact/fetch-contacts");
     }
